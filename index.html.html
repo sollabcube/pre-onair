@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xpert - Break the Security-Utility Seesaw</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1d1d1f;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #f2f2f7;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #007aff;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #1d1d1f;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #007aff;
+        }
+
+        .cta-button {
+            background: #007aff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #0056cc;
+            transform: translateY(-1px);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: #007aff;
+            border: 2px solid #007aff;
+        }
+
+        .cta-button.secondary:hover {
+            background: #007aff;
+            color: white;
+        }
+
+        /* Section Common Styles */
+        .section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            color: #6e6e73;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 0 100px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .hero-left {
+            flex: 3;
+        }
+
+        .hero-right {
+            flex: 2;
+        }
+
+        .hero-title {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #007aff, #34c759);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            color: #6e6e73;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .role-benefits-cycling {
+            margin-bottom: 32px;
+        }
+
+        .cycling-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #007aff;
+            margin-bottom: 12px;
+        }
+
+        .role-benefit-item {
+            font-size: 16px;
+            color: #1d1d1f;
+            opacity: 0;
+            display: none;
+            transition: all 0.5s ease;
+            line-height: 1.4;
+        }
+
+        .role-benefit-item.active {
+            opacity: 1;
+            display: block;
+        }
+
+        .role-benefit-item .role-emoji {
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero-demo {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.15);
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .demo-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .demo-subtitle {
+            font-size: 14px;
+            color: #6e6e73;
+        }
+
+        .demo-chat {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .demo-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .demo-message:last-child {
+            margin-bottom: 0;
+        }
+
+        .demo-ceo { color: #007aff; }
+        .demo-dev { color: #34c759; }
+        .demo-marketer { color: #ff9500; }
+        .demo-system { color: #8e8e93; }
+
+        /* Problem Section */
+        .problem-section {
+            background: #f8f9fa;
+        }
+
+        .data-vault-container {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .vault-visual {
+            flex: 1;
+            text-align: center;
+        }
+
+        .vault-box {
+            width: 240px;
+            height: 160px;
+            background: linear-gradient(135deg, #8e8e93, #d1d1d6);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            transition: all 0.8s ease;
+        }
+
+        .vault-box::before {
+            content: '🔒';
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 24px;
+            transition: all 0.8s ease;
+        }
+
+        .vault-box.unlocked {
+            background: linear-gradient(135deg, #34c759, #30d158);
+        }
+
+        .vault-box.unlocked::before {
+            content: '🔓';
+        }
+
+        .vault-content {
+            flex: 1;
+        }
+
+        .vault-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .vault-description {
+            font-size: 16px;
+            color: #6e6e73;
+            margin-bottom: 24px;
+        }
+
+        .vault-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-number.locked { color: #ff3b30; }
+        .stat-number.unlocked { color: #34c759; }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6e6e73;
+        }
+
+        .solution-box {
+            background: linear-gradient(135deg, #f0fff4, #e6fffa);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .solution-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .solution-description {
+            font-size: 16px;
+            color: #6e6e73;
+            margin-bottom: 24px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .solution-stats {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+        }
+
+        .solution-stat {
+            text-align: center;
+        }
+
+        .solution-stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #34c759;
+        }
+
+        .solution-stat-label {
+            font-size: 12px;
+            color: #6e6e73;
+            margin-top: 4px;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            background: white;
+        }
+
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .workflow-step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: #007aff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: #6e6e73;
+        }
+
+        .collaboration-demo {
+            background: #f8f9ff;
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            gap: 24px;
+            min-height: 400px;
+        }
+
+        .demo-chat-panel {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1d1d1f;
+            border-bottom: 1px solid #f2f2f7;
+            padding-bottom: 12px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .chat-message.ceo {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .chat-message.dev {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .chat-message.marketer {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .chat-message.system {
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .chat-input {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #6e6e73;
+        }
+
+        .demo-canvas-panel {
+            flex: 2;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1d1d1f;
+            border-bottom: 1px solid #f2f2f7;
+            padding-bottom: 12px;
+        }
+
+        .canvas-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #d1d1d6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #6e6e73;
+            font-size: 14px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .metric-value.negative { color: #ff3b30; }
+        .metric-value.positive { color: #34c759; }
+
+        .metric-label {
+            font-size: 11px;
+            color: #6e6e73;
+        }
+
+        /* Role Benefits Section */
+        .role-benefits {
+            background: #f8f9fa;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .benefit-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 122, 255, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .benefit-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .benefit-description {
+            font-size: 13px;
+            color: #6e6e73;
+            margin-bottom: 16px;
+        }
+
+        .benefit-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .benefit-list li {
+            font-size: 12px;
+            color: #1d1d1f;
+            margin-bottom: 6px;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .benefit-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #34c759;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .subsection-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: #1d1d1f;
+        }
+
+        /* Technology Section */
+        .technology {
+            background: white;
+        }
+
+        .tech-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .tech-feature {
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #f8f9ff, #fff);
+        }
+
+        .tech-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .tech-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .tech-description {
+            font-size: 14px;
+            color: #6e6e73;
+            margin-bottom: 16px;
+        }
+
+        .tech-specs {
+            list-style: none;
+        }
+
+        .tech-specs li {
+            padding: 4px 0;
+            font-size: 13px;
+            color: #1d1d1f;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .tech-specs li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #007aff;
+            font-weight: bold;
+        }
+
+        .tech-highlight {
+            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .tech-highlight-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+        }
+
+        .tech-highlight-description {
+            font-size: 16px;
+            color: #6e6e73;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background: #f8f9fa;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .pricing-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #007aff;
+            transform: scale(1.02);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #007aff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .plan-price {
+            font-size: 36px;
+            font-weight: 800;
+            color: #007aff;
+            margin-bottom: 6px;
+        }
+
+        .plan-period {
+            font-size: 14px;
+            color: #6e6e73;
+            margin-bottom: 24px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .plan-features li {
+            padding: 6px 0;
+            font-size: 14px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #34c759;
+            font-weight: bold;
+        }
+
+        /* Final CTA Section */
+        .final-cta {
+            background: linear-gradient(135deg, #007aff, #34c759);
+            color: white;
+            text-align: center;
+        }
+
+        .final-cta-title {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .final-cta-description {
+            font-size: 18px;
+            margin-bottom: 32px;
+            opacity: 0.95;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .final-cta .cta-button {
+            background: white;
+            color: #007aff;
+            font-size: 16px;
+            padding: 14px 28px;
+        }
+
+        .final-cta .cta-button:hover {
+            background: #f2f2f7;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1d1d1f;
+            color: white;
+            padding: 50px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-brand {
+            max-width: 280px;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #007aff;
+            margin-bottom: 12px;
+        }
+
+        .footer-description {
+            font-size: 14px;
+            color: #8e8e93;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            background: #2c2c2e;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8e8e93;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .social-link:hover {
+            background: #007aff;
+            color: white;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: #8e8e93;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #2c2c2e;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .footer-bottom-links a {
+            color: #8e8e93;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .footer-bottom-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            color: #8e8e93;
+            font-size: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero-content {
+                flex-direction: column;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-left, .hero-right {
+                flex: none;
+            }
+
+            .data-vault-container {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .collaboration-demo {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .demo-chat-panel, .demo-canvas-panel {
+                flex: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .workflow-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-features {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vault-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .solution-stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation Utilities */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">XPERT</div>
+                <nav class="nav-menu">
+                    <a href="#how-it-works" class="nav-link">How It Works</a>
+                    <a href="#benefits" class="nav-link">Benefits</a>
+                    <a href="#technology" class="nav-link">Technology</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="#contact" class="cta-button">Get Early Access</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero section">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-left">
+                    <h1 class="hero-title">Break the Security-Utility Seesaw with Real-Time Data Collaboration</h1>
+                    <p class="hero-description">Xpert enables secure data collaboration across teams without compromising sensitive information through synthetic data technology.</p>
+                    
+                    <div class="role-benefits-cycling">
+                        <div class="cycling-label">Tailored for every role:</div>
+                        <div class="role-benefit-item active" data-role="ceo">
+                            <span class="role-emoji">👔 CEO:</span> Access 88% more data for strategic decisions
+                        </div>
+                        <div class="role-benefit-item" data-role="developer">
+                            <span class="role-emoji">💻 Developer:</span> Build on production-like data safely
+                        </div>
+                        <div class="role-benefit-item" data-role="marketer">
+                            <span class="role-emoji">📢 Marketer:</span> Test campaigns on synthetic cohorts
+                        </div>
+                        <div class="role-benefit-item" data-role="planner">
+                            <span class="role-emoji">📊 Planner:</span> Generate insights from locked datasets
+                        </div>
+                    </div>
+
+                    <div class="hero-cta">
+                        <a href="#contact" class="cta-button">Get Early Access</a>
+                        <a href="#how-it-works" class="cta-button secondary">See How It Works</a>
+                    </div>
+                </div>
+                
+                <div class="hero-right">
+                    <div class="hero-demo">
+                        <div class="demo-header">
+                            <div class="demo-icon">🔄</div>
+                            <div class="demo-title">Real-Time Collaboration</div>
+                            <div class="demo-subtitle">Watch teams work together safely</div>
+                        </div>
+                        <div class="demo-chat">
+                            <div class="demo-message">
+                                <span class="demo-ceo">💼 CEO:</span> "Show Q4 vs competitors"
+                            </div>
+                            <div class="demo-message">
+                                <span class="demo-dev">💻 Dev:</span> "Processing with DTS..."
+                            </div>
+                            <div class="demo-message">
+                                <span class="demo-marketer">📢 Marketer:</span> "Menu A down 22%"
+                            </div>
+                            <div class="demo-message">
+                                <span class="demo-system">📊 System:</span> "Strategy ready →"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Solution Section -->
+    <section class="problem-section section" id="problem">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">88% of Enterprise Data Stays <span style="color: #ff3b30;">Locked Away</span></h2>
+                <p class="section-subtitle">Companies seal data vaults due to privacy concerns. Xpert unlocks this treasure safely.</p>
+            </div>
+
+            <div class="data-vault-container">
+                <div class="vault-visual">
+                    <div class="vault-box" id="vault-box">
+                        <span id="vault-text">88% LOCKED</span>
+                    </div>
+                </div>
+                <div class="vault-content">
+                    <h3 class="vault-title">The Data Liberation Challenge</h3>
+                    <p class="vault-description">
+                        Privacy regulations and security policies keep most enterprise data unusable. Traditional solutions force you to choose between security and utility.
+                    </p>
+                    <div class="vault-stats">
+                        <div class="stat-card">
+                            <div class="stat-number locked">88%</div>
+                            <div class="stat-label">Data Locked</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number unlocked">100%</div>
+                            <div class="stat-label">Utility Preserved</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="solution-box">
+                <h3 class="solution-title">Xpert Changes Everything</h3>
+                <p class="solution-description">
+                    Our DTS technology unlocks data potential while maintaining mathematical privacy guarantees.
+                </p>
+                <div class="solution-stats">
+                    <div class="solution-stat">
+                        <div class="solution-stat-number">100×</div>
+                        <div class="solution-stat-label">Privacy Guarantee</div>
+                    </div>
+                    <div class="solution-stat">
+                        <div class="solution-stat-number">< 3%</div>
+                        <div class="solution-stat-label">Utility Loss</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works section" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How Real-Time Collaboration Works</h2>
+                <p class="section-subtitle">Experience cross-functional data collaboration in three simple steps</p>
+            </div>
+
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Choose Your Role</div>
+                    <div class="step-description">Select CEO, Developer, Marketer, or Planner. Each gets customized tools.</div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Chat-Style Interaction</div>
+                    <div class="step-description">Ask questions naturally. Our AI understands your domain needs.</div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Real-Time Canvas</div>
+                    <div class="step-description">See insights instantly. Collaborate through shared workspaces.</div>
+                </div>
+            </div>
+
+            <div class="collaboration-demo">
+                <div class="demo-chat-panel">
+                    <div class="chat-header">💬 Team Chat</div>
+                    <div class="chat-messages">
+                        <div class="chat-message ceo">
+                            <strong>CEO:</strong> How's our F&B performance vs competitors?
+                        </div>
+                        <div class="chat-message dev">
+                            <strong>Dev:</strong> Analyzing sales data + benchmarks...
+                        </div>
+                        <div class="chat-message marketer">
+                            <strong>Marketer:</strong> Found issue: Menu A down 22%, salt complaints
+                        </div>
+                        <div class="chat-message system">
+                            <strong>System:</strong> Strategy recommendations → Canvas updated
+                        </div>
+                    </div>
+                    <div class="chat-input">💬 Type your message...</div>
+                </div>
+
+                <div class="demo-canvas-panel">
+                    <div class="canvas-header">📊 Live Analytics Canvas</div>
+                    <div class="canvas-content">
+                        <div class="metrics-row">
+                            <div class="metric-card">
+                                <div class="metric-value negative">-22%</div>
+                                <div class="metric-label">Menu A Sales</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value positive">+28%</div>
+                                <div class="metric-label">Strategy B Impact</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">12%</div>
+                                <div class="metric-label">"Too Salty" Reviews</div>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder">
+                            📈 Real-time Performance Dashboard<br>
+                            <small>Menu performance • Customer sentiment • Strategy comparison</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#contact" class="cta-button">Experience the Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Role Benefits Section -->
+    <section class="role-benefits section" id="benefits">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Every Role Wins with Xpert</h2>
+                <p class="section-subtitle">Tailored experiences across roles and domains</p>
+            </div>
+
+            <div class="subsection-title">Role-Based Benefits</div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">👔</div>
+                    <div class="benefit-title">CEO</div>
+                    <div class="benefit-description">Strategic insights from locked data</div>
+                    <ul class="benefit-list">
+                        <li>Access 88% more enterprise data</li>
+                        <li>Cross-functional collaboration visibility</li>
+                        <li>Real-time ROI impact analysis</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">💻</div>
+                    <div class="benefit-title">Developer</div>
+                    <div class="benefit-description">Production-like synthetic data</div>
+                    <ul class="benefit-list">
+                        <li>Develop without privacy risks</li>
+                        <li>Accelerated development cycles</li>
+                        <li>No legal approval delays</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">📢</div>
+                    <div class="benefit-title">Marketer</div>
+                    <div class="benefit-description">Test on virtual cohorts safely</div>
+                    <ul class="benefit-list">
+                        <li>Simulate campaign performance</li>
+                        <li>A/B test without exposure</li>
+                        <li>Optimize spend pre-launch</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">📊</div>
+                    <div class="benefit-title">Planner</div>
+                    <div class="benefit-description">Insights from locked datasets</div>
+                    <ul class="benefit-list">
+                        <li>Analyze sensitive metrics safely</li>
+                        <li>Comprehensive reporting</li>
+                        <li>Scenario planning with synthetics</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection-title">Domain-Specific Applications</div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🍽️</div>
+                    <div class="benefit-title">F&B Industry</div>
+                    <div class="benefit-description">Menu optimization & behavior analysis</div>
+                    <ul class="benefit-list">
+                        <li>Menu performance tracking</li>
+                        <li>Customer sentiment analysis</li>
+                        <li>Revenue forecasting</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">💄</div>
+                    <div class="benefit-title">Beauty & Retail</div>
+                    <div class="benefit-description">Customer personas & reactions</div>
+                    <ul class="benefit-list">
+                        <li>Persona generation</li>
+                        <li>Product reaction tracking</li>
+                        <li>Campaign effectiveness</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">📢</div>
+                    <div class="benefit-title">Marketing</div>
+                    <div class="benefit-description">Campaign performance optimization</div>
+                    <ul class="benefit-list">
+                        <li>ROI analysis & optimization</li>
+                        <li>Audience segmentation</li>
+                        <li>Attribution modeling</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">💼</div>
+                    <div class="benefit-title">Enterprise</div>
+                    <div class="benefit-description">Strategic business intelligence</div>
+                    <ul class="benefit-list">
+                        <li>Performance metrics analysis</li>
+                        <li>Market trend forecasting</li>
+                        <li>Strategic scenario modeling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology section" id="technology">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Makes Xpert Possible</h2>
+                <p class="section-subtitle">Breakthrough technologies ensuring both security and utility</p>
+            </div>
+
+            <div class="tech-features">
+                <div class="tech-feature">
+                    <div class="tech-icon">🔄</div>
+                    <div class="tech-title">DTS (Data Transformation System)</div>
+                    <div class="tech-description">Generate synthetic twins statistically identical to originals but mathematically impossible to reverse-engineer.</div>
+                    <ul class="tech-specs">
+                        <li>100× privacy guarantee vs. traditional masking</li>
+                        <li>Utility delta < 3% - models perform as if on raw data</li>
+                        <li>Differential privacy with formal guarantees</li>
+                        <li>Real-time synthesis for streaming data</li>
+                    </ul>
+                </div>
+
+                <div class="tech-feature">
+                    <div class="tech-icon">🛡️</div>
+                    <div class="tech-title">LLM Capsule Gateway</div>
+                    <div class="tech-description">Essential B2B infrastructure - filter sensitive information before it reaches any LLM.</div>
+                    <ul class="tech-specs">
+                        <li>Automatic sensitive information detection</li>
+                        <li>Enterprise → LLM Capsule → Xpert flow</li>
+                        <li>Compliance-ready for GDPR, HIPAA, SOX</li>
+                        <li>Zero-trust architecture</li>
+                    </ul>
+                </div>
+
+                <div class="tech-feature">
+                    <div class="tech-icon">⚡</div>
+                    <div class="tech-title">Real-Time Collaboration Engine</div>
+                    <div class="tech-description">Figma-style collaboration for data teams with multi-agent simulation capabilities.</div>
+                    <ul class="tech-specs">
+                        <li>Support for 100+ concurrent enterprise users</li>
+                        <li>Thousands of AI agents for scenario simulation</li>
+                        <li>Owner + collaborator permission structure</li>
+                        <li>Instant sync across all connected devices</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tech-highlight">
+                <h3 class="tech-highlight-title">Global Competitive Advantage</h3>
+                <p class="tech-highlight-description">
+                    "Privacy-First, Accuracy-Last Synthetic Intelligence" - While competitors force trade-offs, Xpert delivers both security and utility simultaneously.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing section" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Choose Your Plan</h2>
+                <p class="section-subtitle">Flexible pricing that scales with your collaboration needs</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="plan-name">Starter</div>
+                    <div class="plan-price">Contact</div>
+                    <div class="plan-period">for pricing</div>
+                    <ul class="plan-features">
+                        <li>Up to 5 team members</li>
+                        <li>Basic DTS data synthesis</li>
+                        <li>Standard collaboration tools</li>
+                        <li>Email support</li>
+                        <li>Basic compliance features</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="width: 100%; text-align: center; display: block; text-decoration: none;">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="plan-name">Professional</div>
+                    <div class="plan-price">Contact</div>
+                    <div class="plan-period">for pricing</div>
+                    <ul class="plan-features">
+                        <li>Up to 50 team members</li>
+                        <li>Advanced DTS + LLM Capsule</li>
+                        <li>Real-time collaboration canvas</li>
+                        <li>Priority support</li>
+                        <li>Advanced security features</li>
+                        <li>Custom integrations</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="width: 100%; text-align: center; display: block; text-decoration: none;">Get Started</a>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price">Custom</div>
+                    <div class="plan-period">tailored solution</div>
+                    <ul class="plan-features">
+                        <li>Unlimited team members</li>
+                        <li>On-premise deployment</li>
+                        <li>Dedicated infrastructure</li>
+                        <li>24/7 dedicated support</li>
+                        <li>Custom compliance requirements</li>
+                        <li>White-label options</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="width: 100%; text-align: center; display: block; text-decoration: none;">Contact Sales</a>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 32px;">
+                <p style="font-size: 14px; color: #6e6e73;">All plans include secure data transformation, role-based access, and real-time collaboration features.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta section" id="contact">
+        <div class="container">
+            <h2 class="final-cta-title">Join the Data Liberation Movement</h2>
+            <p class="final-cta-description">Break free from the security-utility tradeoff. Unlock your organization's full data potential.</p>
+            <a href="mailto:contact@xpert.ai" class="cta-button">Get Early Access</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">XPERT</div>
+                    <div class="footer-description">
+                        The world's first real-time data collaboration platform that breaks the security-utility seesaw through synthetic data technology.
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
+                        <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+                        <a href="#" class="social-link" aria-label="GitHub">⚡</a>
+                        <a href="#" class="social-link" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#benefits">Benefits</a></li>
+                        <li><a href="#technology">Technology</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Solutions</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">For CEOs</a></li>
+                        <li><a href="#">For Developers</a></li>
+                        <li><a href="#">For Marketers</a></li>
+                        <li><a href="#">For Planners</a></li>
+                        <li><a href="#">Enterprise</a></li>
+                        <li><a href="#">Startups</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Whitepapers</a></li>
+                        <li><a href="#">Webinars</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Investors</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="copyright">© 2025 CUBIG. All rights reserved.</div>
+                <ul class="footer-bottom-links">
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Role cycling animation in hero section
+        let currentRoleIndex = 0;
+        const roleItems = document.querySelectorAll('.role-benefit-item');
+        
+        function cycleRoles() {
+            if (roleItems.length === 0) return;
+            
+            roleItems[currentRoleIndex].classList.remove('active');
+            currentRoleIndex = (currentRoleIndex + 1) % roleItems.length;
+            roleItems[currentRoleIndex].classList.add('active');
+        }
+        
+        // Start cycling after 3 seconds, then every 3 seconds
+        if (roleItems.length > 0) {
+            setTimeout(() => {
+                setInterval(cycleRoles, 3000);
+            }, 3000);
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Vault unlock animation
+        setTimeout(() => {
+            const vaultBox = document.getElementById('vault-box');
+            const vaultText = document.getElementById('vault-text');
+            
+            if (vaultBox && vaultText) {
+                vaultBox.classList.add('unlocked');
+                vaultText.textContent = '88% UNLOCKED';
+            }
+        }, 4000);
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.section-header, .benefit-card, .tech-feature, .pricing-card, .workflow-step').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Error handling for missing elements
+        window.addEventListener('error', function(e) {
+            console.warn('Minor script error handled:', e.message);
+        });
+
+        // Ensure all animations work properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Double-check all interactive elements are working
+            console.log('Xpert landing page loaded successfully');
+        });
+    </script>
+</body>
+</html>
+                            
