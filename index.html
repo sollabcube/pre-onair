@@ -314,22 +314,92 @@
             flex: 1;
         }
 
-        .vault-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 16px;
+        .challenge-box {
+            background: linear-gradient(135deg, #fff4f4, #ffe6e6);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
         }
 
-        .vault-description {
+        .challenge-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+        }
+
+        .challenge-description {
             font-size: 16px;
             color: #6e6e73;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            line-height: 1.5;
         }
 
-        .vault-stats {
+        .problem-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .problem-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(255, 59, 48, 0.1);
+        }
+
+        .problem-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .problem-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1d1d1f;
+        }
+
+        .problem-description {
+            font-size: 13px;
+            color: #6e6e73;
+            line-height: 1.4;
+        }
+
+        .solution-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 16px;
+        }
+
+        .solution-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 122, 255, 0.1);
+            padding: 16px 20px;
+            border-radius: 12px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .solution-step-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .solution-step-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+
+        .solution-arrow {
+            font-size: 24px;
+            color: #007aff;
+            font-weight: bold;
         }
 
         .stat-card {
@@ -1046,6 +1116,27 @@
             }
 
             @media (max-width: 768px) {
+                .problem-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+                
+                .challenge-box, .solution-box {
+                    padding: 24px;
+                }
+                
+                .challenge-description, .solution-description {
+                    font-size: 14px;
+                }
+                
+                .solution-step {
+                    padding: 12px 16px;
+                }
+                
+                .solution-step-text {
+                    font-size: 13px;
+                }
+                
                 .benefits-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
@@ -1243,28 +1334,38 @@
     <section class="problem-section section" id="problem">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Data Teams Work in <span style="color: #ff3b30;">Silos</span>, Decisions Suffer</h2>
+                <h2 class="section-title">Siloed Data Blocks Smart Decisions <span style="color: #ff3b30;">Across Teams</span></h2>
                 <p class="section-subtitle">Break down barriers between departments with instant, secure collaboration</p>
             </div>
 
             <div class="data-vault-container">
                 <div class="vault-content">
-                    <h3 class="vault-title">The Collaboration Challenge</h3>
-                    <p class="vault-description">
-                        Data sits in departmental silos. Teams work separately. Critical insights get lost in translation.
-                    </p>
-                    <div class="vault-stats">
-                        <div class="stat-card">
-                            <div class="stat-number locked">CEO</div>
-                            <div class="stat-label">Multiple department reports but no connected unified insights, delayed decision-making</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number locked">Marketer</div>
-                            <div class="stat-label">Requesting data from multiple departments for target analysis takes weeks to compile</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number locked">Planner</div>
-                            <div class="stat-label">Strategic planning data scattered across departments making comprehensive analysis difficult</div>
+                    <div class="challenge-box">
+                        <h3 class="challenge-title">The Data Collaboration Challenge</h3>
+                        <p class="challenge-description">
+                            Organizations struggle with fragmented data,<br>wasted time, security barriers, and mounting costs.
+                        </p>
+                        <div class="problem-grid">
+                            <div class="problem-card">
+                                <div class="problem-icon">📊</div>
+                                <div class="problem-title">Data Fragmentation</div>
+                                <div class="problem-description">Critical data scattered across 15+ systems</div>
+                            </div>
+                            <div class="problem-card">
+                                <div class="problem-icon">⏱️</div>
+                                <div class="problem-title">Time Waste</div>
+                                <div class="problem-description">80% time gathering, 20% analyzing</div>
+                            </div>
+                            <div class="problem-card">
+                                <div class="problem-icon">🔒</div>
+                                <div class="problem-title">Security Barriers</div>
+                                <div class="problem-description">88% of datasets locked behind privacy walls</div>
+                            </div>
+                            <div class="problem-card">
+                                <div class="problem-icon">💸</div>
+                                <div class="problem-title">Cost Impact</div>
+                                <div class="problem-description">$2M+ integration costs annually</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1272,20 +1373,22 @@
                     <div class="solution-box">
                         <h3 class="solution-title">One Click, All Teams Connected</h3>
                         <p class="solution-description">
-                            Xpert transforms isolated data into collaborative workspaces where every team contributes and benefits.
+                            Xpert transforms isolated data into collaborative<br>workspaces where every team contributes and benefits.
                         </p>
-                        <div class="solution-stats">
-                            <div class="solution-stat">
-                                <div class="solution-stat-number">Instant</div>
-                                <div class="solution-stat-label">Secure data collaboration environment</div>
+                        <div class="solution-flow">
+                            <div class="solution-step">
+                                <div class="solution-step-icon">⚡</div>
+                                <div class="solution-step-text">Instant collaboration environment</div>
                             </div>
-                            <div class="solution-stat">
-                                <div class="solution-stat-number">Real-time</div>
-                                <div class="solution-stat-label">Cross-department insight sharing</div>
+                            <div class="solution-arrow">↓</div>
+                            <div class="solution-step">
+                                <div class="solution-step-icon">🔄</div>
+                                <div class="solution-step-text">Real-time cross-department sharing</div>
                             </div>
-                            <div class="solution-stat">
-                                <div class="solution-stat-number">Unified</div>
-                                <div class="solution-stat-label">Enterprise data workspace</div>
+                            <div class="solution-arrow">↓</div>
+                            <div class="solution-step">
+                                <div class="solution-step-icon">🎯</div>
+                                <div class="solution-step-text">Unified enterprise workspace</div>
                             </div>
                         </div>
                     </div>
