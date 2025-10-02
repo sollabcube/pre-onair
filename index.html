@@ -234,8 +234,6 @@
             flex-direction: column;
             min-height: 0;
             overflow: hidden;
-            transition: margin-left 0.3s ease;
-            margin-left: 0;
         }
 
         .content-view {
@@ -644,10 +642,29 @@
             min-height: 0;
         }
 
-        #discussion-view.active {
-            display: block !important;
+        /* 통합 리포트도 다른 뷰와 동일하게 flex 컬럼 레이아웃 */
+        #discussion-view.content-view.active {
+            display: flex !important;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
         }
-        
+
+        /* 좌/우 패널이 세로로 꽉 차도록 */
+        #discussion-view .team-collaboration-panel,
+        #discussion-view .report-content-panel { display:flex; flex-direction:column; min-height:0; }
+
+        /* 실제 스크롤은 가장 안쪽 콘텐츠 래퍼 한 곳에만 */
+        #discussion-view .team-chat-container,
+        #discussion-view .tab-content-container { flex:1; min-height:0; overflow-y:auto; }
+
+        /* 플로팅바 대응 등으로 남아있던 바닥 패딩 제거 */
+        #discussion-view .tab-content-container { padding-bottom: 0 !important; }
+
+        /* 마지막 요소의 바닥 마진만 0으로 눌러 공백 제거 */
+        #discussion-view .report-content-panel > *:last-child { margin-bottom: 0 !important; }
+
+
         #report-hub-view.active {
             display: flex !important;
             flex-direction: column;
@@ -761,7 +778,7 @@
                 </div>
                 
                 <!-- Report Workspace with Chat and Tabs -->
-                <div class="report-workspace" style="display: grid; grid-template-columns: 35% 65%; height: calc(100vh - 120px); gap: 0; min-height: 0;">
+                <div class="report-workspace" style="display: grid; grid-template-columns: 35% 65%; gap: 0; min-height: 0;">
                     <!-- Left: Team Collaboration Panel -->
                     <div class="team-collaboration-panel" style="background: #f8f9fa; border-right: 1px solid #e9ecef; display: flex; flex-direction: column;">
                         <!-- Active Users Display -->
@@ -1617,7 +1634,7 @@
                                 </div>
                                 <h3 class="data-source-title">AWS Integration</h3>
                                 <p class="data-source-desc">
-                                    Direct database connection using a standard AWS account
+                                    Direct database connection</br>using a standard AWS account
                                 </p>
                             </div>
                             <div class="data-source-card" onclick="selectDataSource(event, 'demo')">
@@ -1626,7 +1643,7 @@
                                 </div>
                                 <h3 class="data-source-title">Sample Dataset</h3>
                                 <p class="data-source-desc">
-                                    Ready-to-use demo dataset for testing and exploration
+                                    Ready-to-use demo dataset</br>for testing and exploration
                                 </p>
                             </div>
                         </div>
@@ -1644,7 +1661,7 @@
             <!-- Integration View -->
             <div class="content-view" id="integration-view">
                 <div class="content-header">
-                    <h1 class="page-title">Integration & Connectivity</h1>
+                    <h1 class="page-title">Integration</h1>
                     <div class="header-actions">
                         <button class="btn btn-secondary">
                             <i class="fas fa-book"></i>
@@ -1724,14 +1741,14 @@
                                     <i class="fas fa-shield-alt"></i>
                                 </div>
                                 <div style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 8px;">Security First</div>
-                                <div style="font-size: 14px; color: #6b7280; line-height: 1.5;">Enterprise-grade encryption and compliance controls across all integrations</div>
+                                <div style="font-size: 14px; color: #6b7280; line-height: 1.5;">Enterprise-grade encryption and compliance controls</br>across all integrations</div>
                             </div>
                             <div style="text-align: center;">
                                 <div style="width: 48px; height: 48px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; margin: 0 auto 16px;">
                                     <i class="fas fa-users"></i>
                                 </div>
                                 <div style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 8px;">Team Collaboration</div>
-                                <div style="font-size: 14px; color: #6b7280; line-height: 1.5;">Real-time data sharing and analysis across different teams and departments</div>
+                                <div style="font-size: 14px; color: #6b7280; line-height: 1.5;">Real-time data sharing and analysis across</br>different teams and departments</div>
                             </div>
                             <div style="text-align: center;">
                                 <div style="width: 48px; height: 48px; background: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; margin: 0 auto 16px;">
@@ -1909,7 +1926,7 @@
                         </h2>
                         
                         <p style="font-size: 16px; color: #6b7280; line-height: 1.6; margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto;">
-                            We are developing comprehensive settings and management features that will provide detailed organizational and account management capabilities. This section will include:
+                            We are developing comprehensive settings and management features that will provide detailed organizational and account management capabilities.</br>This section will include:
                         </p>
                         
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px; text-align: left;">
@@ -2020,8 +2037,8 @@
                                 
                                 <!-- Report Info -->
                                 <div>
-                                    <h4 style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 6px;">25 3Q Customer Analysis</h4>
-                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">September 8, 2025, 11 PM</p>
+                                    <h4 style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 6px;">2025 3Q Customer Analysis</h4>
+                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">September 18, 2025, 11 PM</p>
                                     
                                     <!-- Stats -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
@@ -2065,7 +2082,7 @@
                                 
                                 <!-- Report Info -->
                                 <div>
-                                    <h4 style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 6px;">May 2025 Campaign Comprehensive Analysis (Demo Sample)</h4>
+                                    <h4 style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 6px;">May 2025 Campaign Analysis</br>(Demo Sample)</h4>
                                     <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">September 8, 2025, 11 PM</p>
                                     
                                     <!-- Stats -->
@@ -2120,7 +2137,7 @@
                                 <!-- Report Info -->
                                 <div>
                                     <h4 style="font-size: 16px; font-weight: 600; color: #171719; margin-bottom: 6px;">Customer Segment Analysis</h4>
-                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">September 8, 2025, 11 PM</p>
+                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">September 15, 2025, 8 PM</p>
                                     
                                     <!-- Stats -->
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
@@ -2154,13 +2171,6 @@
             <div class="content-view" id="workspace-view">
                 <div class="content-header">
                     <h1 class="page-title">Dataset Workspace</h1>
-                    <div class="header-actions">
-                        <div style="display: flex; gap: 16px; align-items: center; font-size: 14px; color: #6b7280;">
-                            <div><strong style="color: #171719;">4.8GB</strong> Master Data</div>
-                            <div><strong style="color: #171719;">3</strong> Active Teams</div>
-                            <div><strong style="color: #171719;">12</strong> Requests</div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="collaboration-workspace" id="workspace" style="display: grid; grid-template-columns: 600px 1fr 640px; flex: 1; overflow: hidden; height: calc(100vh - 120px);">
@@ -2211,7 +2221,7 @@
                             <div class="team-request-card" onclick="selectTeamData('finance')" style="background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
                                 <div class="team-info" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                                     <div class="team-avatar team-finance" style="width: 24px; height: 24px; background: #4ecdc4; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;"><i class="fas fa-dollar-sign"></i></div>
-                                    <div class="team-name" style="font-weight: 600; color: #1d1d1f;">Finance Team <span style="font-size: 10px; color: #6e6e73; font-weight: 400;">(Demo Example)</span></div>
+                                    <div class="team-name" style="font-weight: 600; color: #1d1d1f;">Finance Team (Demo Example)</span></div>
                                 </div>
                                 <div class="request-purpose" style="font-size: 13px; color: #6e6e73; margin-bottom: 8px;">Monthly summary reports</div>
                                 <div class="request-details" style="display: flex; justify-content: space-between; align-items: center;">
@@ -2229,7 +2239,7 @@
                             <div class="team-request-card" onclick="selectTeamData('sales')" style="background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
                                 <div class="team-info" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                                     <div class="team-avatar team-sales" style="width: 24px; height: 24px; background: #45b7d1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;"><i class="fas fa-bullseye"></i></div>
-                                    <div class="team-name" style="font-weight: 600; color: #1d1d1f;">Sales Team <span style="font-size: 10px; color: #6e6e73; font-weight: 400;">(Demo Example)</span></div>
+                                    <div class="team-name" style="font-weight: 600; color: #1d1d1f;">Sales Team (Demo Example)</span></div>
                                 </div>
                                 <div class="request-purpose" style="font-size: 13px; color: #6e6e73; margin-bottom: 8px;">Customer segment analysis</div>
                                 <div class="request-details" style="display: flex; justify-content: space-between; align-items: center;">
@@ -3384,20 +3394,22 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.querySelector('.main-content');
-            
+
+            // 1) 사이드바 폭만 전환
             sidebar.classList.toggle('collapsed');
-            
-            // 메인 콘텐츠 마진 조정
-            if (sidebar.classList.contains('collapsed')) {
-                if (mainContent) {
-                    mainContent.style.marginLeft = '60px';
-                }
-            } else {
-                if (mainContent) {
-                    mainContent.style.marginLeft = '240px';
-                }
+
+            // 2) ✅ 메인에 남아있을지 모를 인라인 여백 제거 (회귀 방지)
+            if (mainContent) {
+                mainContent.style.removeProperty('margin-left');
+                mainContent.style.removeProperty('width');        // 혹시 남아있다면 같이 제거
+                mainContent.style.removeProperty('padding-left'); // 혹시 남아있다면 같이 제거
+                mainContent.style.removeProperty('transform');    // 혹시 남아있다면 같이 제거
             }
+
+            // (선택) 다음 프레임에 리플로우 유도해 레이아웃 안정화
+            requestAnimationFrame(() => { void document.body.offsetHeight; });
         }
+
 
         // Navigation
         function switchView(view) {
@@ -4966,7 +4978,13 @@
             let contentHTML = '';
             
             if (marketingContent) {
-                contentHTML = marketingContent.innerHTML;
+                const rawContent = marketingContent.innerHTML;
+                      // 방어적 래핑: 이미 패딩 래퍼가 있는지 확인 후 없으면 추가
+                      if (rawContent.includes('report-panel__body')) {
+                          contentHTML = rawContent;
+                      } else {
+                          contentHTML = `<div class="report-panel__body" style="padding: 24px;">${rawContent}</div>`;
+               }
             } else {
                 contentHTML = `
                     <div class="report-panel__body" style="padding: 24px;">
