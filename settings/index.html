@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynTitan - 회원 관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F7F7F8;
+            color: #171719;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            height: 69px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            color: #171719;
+            font-family: 'Geist Mono', monospace;
+        }
+
+        .nav-section {
+            flex: 1;
+            padding: 8px 0;
+            overflow-y: auto;
+        }
+
+        .nav-group {
+            margin-bottom: 24px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            margin: 1px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+            color: #171719;
+        }
+
+        .nav-item.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 32px;
+            height: 69px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #171719;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .role-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        .role-btn.active {
+            background: white;
+            color: #171719;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 32px;
+            display: flex;
+            gap: 32px;
+        }
+
+        .tab-item {
+            padding: 16px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-item:hover {
+            color: #171719;
+        }
+
+        .tab-item.active {
+            color: #171719;
+            border-bottom-color: #1f2937;
+        }
+
+        /* Content Body */
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Members Tab */
+        .members-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="%236b7280" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="m11 11 4 4"/></svg>') no-repeat 12px center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            background: white;
+            color: #171719;
+        }
+
+        .btn:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-primary {
+            background: #1f2937;
+            color: white;
+            border-color: #1f2937;
+        }
+
+        .btn-primary:hover {
+            background: #111827;
+            border-color: #111827;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-owner {
+            background: #1f2937;
+            color: white;
+        }
+
+        .badge-leader {
+            background: #e5e7eb;
+            color: #171719;
+        }
+
+        .badge-member {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+            color: #171719;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .action-btn.danger:hover {
+            background: #fee;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        /* Invite Form */
+        .invite-form {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .invite-form.active {
+            display: block;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        /* Teams Tab */
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: #171719;
+        }
+
+        .team-count {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .team-empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        /* Plans Tab */
+        .plan-section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .current-plan {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #171719;
+            font-family: 'Geist Mono', monospace;
+        }
+
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .usage-item {
+            margin-bottom: 16px;
+        }
+
+        .usage-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .usage-value {
+            font-weight: 600;
+            color: #171719;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1f2937;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.warning {
+            background: #f59e0b;
+        }
+
+        .progress-fill.danger {
+            background: #ef4444;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 64px 32px;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state small {
+            font-size: 14px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.2s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #171719;
+            margin-bottom: 4px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Radio Button Group */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #9ca3af;
+            background: #f9fafb;
+        }
+
+        .radio-option.selected {
+            border-color: #1f2937;
+            background: #f9fafb;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .radio-label {
+            flex: 1;
+        }
+
+        .radio-label-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #171719;
+            margin-bottom: 2px;
+        }
+
+        .radio-label-desc {
+            font-size: 13px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">SynTitan</div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-group">
+                    <div class="nav-item active">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="content-header">
+                <h1 class="page-title">회원 관리</h1>
+                <div class="role-selector">
+                    <button class="role-btn active" onclick="switchRole('owner')">Owner</button>
+                    <button class="role-btn" onclick="switchRole('leader')">Leader</button>
+                    <button class="role-btn" onclick="switchRole('member')">Member</button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <div class="tab-item active" onclick="switchTab('organization')">Organization</div>
+                <div class="tab-item" onclick="switchTab('members')">Members</div>
+                <div class="tab-item" onclick="switchTab('teams')">Teams</div>
+                <div class="tab-item" onclick="switchTab('plans')">Plans</div>
+            </div>
+
+            <!-- Content Body -->
+            <div class="content-body">
+                <!-- Organization Tab -->
+                <div id="organization-tab" class="tab-content active">
+                    <div class="plan-section">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">조직 정보</h3>
+                        <p style="font-size: 14px; color: #6b7280; margin-bottom: 24px;">조직의 기본 정보를 관리합니다.</p>
+                        
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label">조직명</label>
+                            <input type="text" class="form-input" value="SynTitan Inc." id="orgName">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label">조직 도메인</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #6b7280; font-size: 14px;">app.syntitan.com/</span>
+                                <input type="text" class="form-input" value="syntitan-inc" style="flex: 1;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label">조직 생성일</label>
+                            <input type="text" class="form-input" value="2024-01-15" disabled style="background: #f9fafb; color: #6b7280;">
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="saveOrgBtn" onclick="saveOrganization()">
+                                변경사항 저장
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="plan-section" id="ownerTransferSection">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #171719;">Owner 권한 인계</h3>
+                        <p style="font-size: 14px; color: #6b7280; margin-bottom: 24px;">
+                            Owner 권한을 다른 멤버에게 이전할 수 있습니다. 이 작업은 되돌릴 수 없습니다.
+                        </p>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label">현재 Owner</label>
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 6px;">
+                                <div style="width: 40px; height: 40px; background: #1f2937; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">김</div>
+                                <div>
+                                    <div style="font-weight: 600; color: #171719;">김철수</div>
+                                    <div style="font-size: 13px; color: #6b7280;">kim@company.com</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label">새 Owner 선택</label>
+                            <select class="form-input" id="newOwnerSelect">
+                                <option value="">멤버를 선택하세요</option>
+                                <option value="2">이영희 (Leader, Marketing)</option>
+                                <option value="3">박민수 (Leader, Finance)</option>
+                                <option value="4">최지은 (Member, Marketing)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label">인계 후 본인의 역할</label>
+                            <select class="form-input" id="afterRole">
+                                <option value="leader">Leader로 유지</option>
+                                <option value="member">Member로 변경</option>
+                                <option value="leave">조직 탈퇴</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="afterTeamGroup" style="margin-bottom: 24px;">
+                            <label class="form-label">배정될 팀</label>
+                            <select class="form-input" id="afterTeam">
+                                <option value="marketing">Marketing</option>
+                                <option value="finance">Finance</option>
+                                <option value="sales">Sales</option>
+                            </select>
+                        </div>
+
+                        <div style="padding: 16px; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 6px; margin-bottom: 24px;">
+                            <div style="display: flex; gap: 12px;">
+                                <div style="margin-top: 2px;">⚠️</div>
+                                <div>
+                                    <div style="font-weight: 600; color: #92400e; margin-bottom: 4px;">주의사항</div>
+                                    <ul style="font-size: 13px; color: #92400e; margin-left: 20px;">
+                                        <li>Owner 권한은 즉시 이전되며 되돌릴 수 없습니다</li>
+                                        <li>인계 후 본인의 역할을 신중히 선택하세요</li>
+                                        <li>패스워드 재입력이 필요합니다</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn" style="background: #ef4444; color: white; border-color: #ef4444;" onclick="transferOwnership()">
+                            Owner 권한 인계
+                        </button>
+                    </div>
+
+                    <div class="plan-section" style="border-color: #fecaca;">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #dc2626;">조직 삭제</h3>
+                        <p style="font-size: 14px; color: #6b7280; margin-bottom: 24px;">
+                            조직을 영구적으로 삭제합니다. 모든 데이터와 멤버 정보가 삭제되며 복구할 수 없습니다.
+                        </p>
+                        <button class="btn" style="background: white; color: #dc2626; border-color: #dc2626;" onclick="deleteOrganization()">
+                            조직 삭제
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Members Tab -->
+                <div id="members-tab" class="tab-content">
+                    <div class="members-header">
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="이름 또는 이메일 검색" id="searchInput">
+                            <select class="filter-select" id="roleFilter">
+                                <option value="all">전체 역할</option>
+                                <option value="owner">Owner</option>
+                                <option value="leader">Leader</option>
+                                <option value="member">Member</option>
+                            </select>
+                            <select class="filter-select" id="teamFilter">
+                                <option value="all">전체 팀</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="finance">Finance</option>
+                                <option value="sales">Sales</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="toggleInviteForm()" id="inviteBtn">
+                            팀원 초대
+                        </button>
+                    </div>
+
+                    <!-- Invite Form -->
+                    <div class="invite-form" id="inviteForm">
+                        <form onsubmit="handleInvite(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">이메일</label>
+                                    <input type="email" class="form-input" placeholder="example@company.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">역할</label>
+                                    <select class="form-input" id="inviteRole">
+                                        <option value="leader">Leader</option>
+                                        <option value="member">Member</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="inviteTeamGroup">
+                                    <label class="form-label">팀</label>
+                                    <select class="form-input" id="inviteTeam">
+                                        <option value="marketing">Marketing</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="sales">Sales</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn" onclick="toggleInviteForm()">취소</button>
+                                <button type="submit" class="btn btn-primary">초대 보내기</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Members Table -->
+                    <div class="table-container">
+                        <table id="membersTable">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>이메일</th>
+                                    <th>역할</th>
+                                    <th>팀</th>
+                                    <th>상태</th>
+                                    <th>가입일</th>
+                                    <th>편집</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Teams Tab -->
+                <div id="teams-tab" class="tab-content">
+                    <div class="members-header">
+                        <h2 style="font-size: 18px; font-weight: 600;">팀 목록</h2>
+                        <button class="btn btn-primary" id="addTeamBtn" onclick="addTeam()">
+                            팀 추가
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="teamsTable">
+                            <thead>
+                                <tr>
+                                    <th>팀명</th>
+                                    <th>Leader</th>
+                                    <th>Member</th>
+                                    <th>전체 인원</th>
+                                    <th>생성일</th>
+                                    <th>편집</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamsTableBody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Plans Tab -->
+                <div id="plans-tab" class="tab-content">
+                    <div class="plan-section">
+                        <div class="plan-header">
+                            <div>
+                                <div class="current-plan">현재 플랜</div>
+                                <div class="plan-name">Pro Plan</div>
+                            </div>
+                            <button class="btn btn-primary" id="upgradePlanBtn" onclick="upgradePlan()">
+                                플랜 업그레이드
+                            </button>
+                        </div>
+
+                        <div class="usage-grid">
+                            <div class="usage-item">
+                                <div class="usage-label">
+                                    <span>멤버 수</span>
+                                    <span class="usage-value">12 / 50</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 24%"></div>
+                                </div>
+                            </div>
+
+                            <div class="usage-item">
+                                <div class="usage-label">
+                                    <span>팀 수</span>
+                                    <span class="usage-value">3 / 10</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%"></div>
+                                </div>
+                            </div>
+
+                            <div class="usage-item">
+                                <div class="usage-label">
+                                    <span>Master Data 용량</span>
+                                    <span class="usage-value">3.2GB / 10GB</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 32%"></div>
+                                </div>
+                            </div>
+
+                            <div class="usage-item">
+                                <div class="usage-label">
+                                    <span>Report 생성 (이번 달)</span>
+                                    <span class="usage-value">89</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="plan-section">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">플랜 비교</h3>
+                        <div style="text-align: center; padding: 64px 32px; background: #f9fafb; border-radius: 8px;">
+                            <i class="fas fa-clock" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;"></i>
+                            <p style="font-size: 16px; color: #6b7280; margin-bottom: 8px;">플랜 비교 준비 중</p>
+                            <p style="font-size: 14px; color: #9ca3af;">자세한 플랜 정보는 곧 제공될 예정입니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const mockMembers = [
+            { id: 1, name: '김철수', email: 'kim@company.com', role: 'owner', team: '-', status: 'active', joinDate: '2024-01-15' },
+            { id: 2, name: '이영희', email: 'lee@company.com', role: 'leader', team: 'marketing', status: 'active', joinDate: '2024-02-01' },
+            { id: 3, name: '박민수', email: 'park@company.com', role: 'leader', team: 'finance', status: 'active', joinDate: '2024-02-01' },
+            { id: 4, name: '최지은', email: 'choi@company.com', role: 'member', team: 'marketing', status: 'active', joinDate: '2024-03-10' },
+            { id: 5, name: '정하나', email: 'jung@company.com', role: 'member', team: 'marketing', status: 'active', joinDate: '2024-03-15' },
+            { id: 6, name: '강민호', email: 'kang@company.com', role: 'member', team: 'finance', status: 'active', joinDate: '2024-03-20' },
+            { id: 7, name: '윤서연', email: 'yoon@company.com', role: 'leader', team: 'sales', status: 'pending', joinDate: '2024-10-25' },
+        ];
+
+        const mockTeams = [
+            { id: 1, name: 'Marketing', leaders: 1, members: 2, total: 3, createdDate: '2024-02-01' },
+            { id: 2, name: 'Finance', leaders: 1, members: 1, total: 2, createdDate: '2024-02-01' },
+            { id: 3, name: 'Sales', leaders: 0, members: 0, total: 0, createdDate: '2024-02-10', empty: true },
+            { id: 4, name: 'Team D', leaders: 0, members: 0, total: 0, createdDate: '2024-01-15', empty: true },
+            { id: 5, name: 'Team E', leaders: 0, members: 0, total: 0, createdDate: '2024-01-15', empty: true },
+        ];
+
+        let currentRole = 'owner';
+        let currentTeam = 'marketing'; // For Leader view
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMembers();
+            renderTeams();
+            updateRoleView();
+        });
+
+        // Tab Switching
+        function switchTab(tab) {
+            // Update tab nav
+            document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + '-tab').classList.add('active');
+        }
+
+        // Role Switching
+        function switchRole(role) {
+            currentRole = role;
+            
+            // Update role buttons
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update view based on role
+            updateRoleView();
+            renderMembers();
+            renderTeams();
+        }
+
+        function updateRoleView() {
+            const inviteBtn = document.getElementById('inviteBtn');
+            const addTeamBtn = document.getElementById('addTeamBtn');
+            const upgradePlanBtn = document.getElementById('upgradePlanBtn');
+            const inviteRole = document.getElementById('inviteRole');
+            const inviteTeamGroup = document.getElementById('inviteTeamGroup');
+            const saveOrgBtn = document.getElementById('saveOrgBtn');
+            const ownerTransferSection = document.getElementById('ownerTransferSection');
+            
+            // Organization 탭 표시/숨김
+            const orgTab = document.querySelector('.tab-item[onclick*="organization"]');
+            const orgTabContent = document.getElementById('organization-tab');
+
+            if (currentRole === 'owner') {
+                // Owner: Full access
+                inviteBtn.style.display = 'flex';
+                addTeamBtn.style.display = 'flex';
+                upgradePlanBtn.style.display = 'flex';
+                inviteRole.innerHTML = '<option value="leader">Leader</option>';
+                inviteTeamGroup.style.display = 'none';
+                if (saveOrgBtn) saveOrgBtn.style.display = 'flex';
+                if (ownerTransferSection) ownerTransferSection.style.display = 'block';
+                
+                // Organization 탭 표시
+                if (orgTab) orgTab.style.display = 'block';
+            } else {
+                // Leader/Member: Limited access
+                if (currentRole === 'leader') {
+                    inviteBtn.style.display = 'flex';
+                    addTeamBtn.style.display = 'none';
+                    upgradePlanBtn.style.display = 'none';
+                    inviteRole.innerHTML = '<option value="member">Member</option>';
+                    inviteRole.disabled = true;
+                    inviteTeamGroup.style.display = 'block';
+                    document.getElementById('inviteTeam').value = currentTeam;
+                    document.getElementById('inviteTeam').disabled = true;
+                } else {
+                    // Member
+                    inviteBtn.style.display = 'none';
+                    addTeamBtn.style.display = 'none';
+                    upgradePlanBtn.style.display = 'none';
+                }
+                
+                if (saveOrgBtn) saveOrgBtn.style.display = 'none';
+                if (ownerTransferSection) ownerTransferSection.style.display = 'none';
+                
+                // Organization 탭 숨김
+                if (orgTab) orgTab.style.display = 'none';
+                
+                // Organization 탭이 활성화되어 있으면 Members 탭으로 전환
+                if (orgTabContent && orgTabContent.classList.contains('active')) {
+                    switchTab('members');
+                    // 탭 네비게이션도 업데이트
+                    document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+                    document.querySelector('.tab-item[onclick*="members"]').classList.add('active');
+                }
+            }
+        }
+
+        // Render Members Table
+        function renderMembers() {
+            const tbody = document.getElementById('membersTableBody');
+            let html = '';
+
+            mockMembers.forEach(member => {
+                // 권한 정의서 기반 권한 로직
+                // Owner: 모든 멤버 편집 가능 (Owner 본인은 인계로만 변경)
+                // Leader: 자기 팀의 Member만 편집 가능
+                // Member: 편집 불가
+                const canEditRole = currentRole === 'owner' && member.role !== 'owner' ||
+                                   (currentRole === 'leader' && member.team === currentTeam && member.role === 'member');
+                const canChangeTeam = currentRole === 'owner' && member.role !== 'owner' ||
+                                     (currentRole === 'leader' && member.team === currentTeam && member.role === 'member');
+                const canRemove = currentRole === 'owner' && member.role !== 'owner' ||
+                                 (currentRole === 'leader' && member.team === currentTeam && member.role === 'member');
+                
+                html += `
+                    <tr>
+                        <td>${member.name}</td>
+                        <td>${member.email}</td>
+                        <td><span class="badge badge-${member.role}">${member.role.toUpperCase()}</span></td>
+                        <td>${member.team}</td>
+                        <td><span class="badge badge-${member.status}">${member.status === 'active' ? '활성' : '대기 중'}</span></td>
+                        <td>${member.joinDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn" ${!canEditRole ? 'disabled' : ''}
+                                    data-id="${member.id}"
+                                    data-name="${member.name}"
+                                    data-role="${member.role}"
+                                    data-team="${member.team}"
+                                    onclick="editRoleHandler(this)">역할 변경</button>
+                                <button class="action-btn" ${!canChangeTeam ? 'disabled' : ''}
+                                    data-id="${member.id}"
+                                    data-name="${member.name}"
+                                    data-team="${member.team}"
+                                    onclick="changeTeamHandler(this)">팀 이동</button>
+                                <button class="action-btn danger" ${!canRemove ? 'disabled' : ''}
+                                    data-id="${member.id}"
+                                    data-name="${member.name}"
+                                    onclick="removeMemberHandler(this)">제거</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Render Teams Table
+        function renderTeams() {
+            const tbody = document.getElementById('teamsTableBody');
+            let html = '';
+
+            mockTeams.forEach(team => {
+                const canEdit = currentRole === 'owner' || 
+                               (currentRole === 'leader' && team.name.toLowerCase() === currentTeam);
+                
+                const teamDisplay = team.empty ? 
+                    `<span class="team-empty">${team.name} (비어있음)</span>` : 
+                    `<span class="team-name">${team.name}</span>`;
+
+                html += `
+                    <tr>
+                        <td>${teamDisplay}</td>
+                        <td>${team.leaders}</td>
+                        <td>${team.members}</td>
+                        <td>${team.total}</td>
+                        <td>${team.createdDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn" ${!canEdit ? 'disabled' : ''} 
+                                    data-id="${team.id}" 
+                                    data-name="${team.name}"
+                                    onclick="renameTeamHandler(this)">팀명 수정</button>
+                                <button class="action-btn danger" ${currentRole !== 'owner' ? 'disabled' : ''} 
+                                    data-id="${team.id}" 
+                                    data-name="${team.name}"
+                                    onclick="deleteTeamHandler(this)">삭제</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Toggle Invite Form
+        function toggleInviteForm() {
+            const form = document.getElementById('inviteForm');
+            form.classList.toggle('active');
+        }
+
+        // Handle Invite
+        function handleInvite(event) {
+            event.preventDefault();
+            alert('초대 이메일이 발송되었습니다.');
+            toggleInviteForm();
+        }
+
+        // Button Handlers (data 속성에서 값을 읽어 함수 호출)
+        function editRoleHandler(btn) {
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            const role = btn.dataset.role;
+            const team = btn.dataset.team;
+            editRole(id, name, role, team);
+        }
+
+        function changeTeamHandler(btn) {
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            const team = btn.dataset.team;
+            changeTeam(id, name, team);
+        }
+
+        function removeMemberHandler(btn) {
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            removeMember(id, name);
+        }
+
+        function renameTeamHandler(btn) {
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            renameTeam(id, name);
+        }
+
+        function deleteTeamHandler(btn) {
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            deleteTeam(id, name);
+        }
+
+        // Action Functions with Real Implementation
+        function editRole(id, name, currentRole, team) {
+            const roles = ['owner', 'leader', 'member'];
+            let roleOptions = '';
+            
+            if (currentRole === 'owner') {
+                alert('Owner 역할은 인계를 통해서만 변경할 수 있습니다.');
+                return;
+            }
+            
+            // Create role selection options
+            roles.forEach(role => {
+                if (role !== 'owner') { // Owner는 선택 불가
+                    const selected = role === currentRole ? 'selected' : '';
+                    roleOptions += `<option value="${role}" ${selected}>${role.toUpperCase()}</option>`;
+                }
+            });
+            
+            const newRole = prompt(`${name}의 역할을 변경합니다.\n\nLEADER 또는 MEMBER를 입력하세요:`);
+            
+            if (newRole) {
+                const roleLower = newRole.toLowerCase();
+                if (roleLower === 'leader' || roleLower === 'member') {
+                    // Mock update
+                    const memberIndex = mockMembers.findIndex(m => m.id === id);
+                    if (memberIndex !== -1) {
+                        mockMembers[memberIndex].role = roleLower;
+                        renderMembers();
+                        alert(`${name}의 역할이 ${roleLower.toUpperCase()}로 변경되었습니다.`);
+                    }
+                } else {
+                    alert('올바른 역할을 입력하세요 (LEADER 또는 MEMBER)');
+                }
+            }
+        }
+
+        function changeTeam(id, name, currentTeam) {
+            const teams = mockTeams.filter(t => !t.empty).map(t => t.name.toLowerCase());
+            
+            let teamList = '사용 가능한 팀:\n';
+            teams.forEach(team => {
+                teamList += `- ${team}\n`;
+            });
+            
+            const newTeam = prompt(`${name}을(를) 이동할 팀을 입력하세요.\n\n${teamList}`);
+            
+            if (newTeam) {
+                const teamLower = newTeam.toLowerCase();
+                if (teams.includes(teamLower)) {
+                    // Mock update
+                    const memberIndex = mockMembers.findIndex(m => m.id === id);
+                    if (memberIndex !== -1) {
+                        mockMembers[memberIndex].team = teamLower;
+                        renderMembers();
+                        alert(`${name}이(가) ${newTeam} 팀으로 이동되었습니다.`);
+                    }
+                } else {
+                    alert('올바른 팀명을 입력하세요.');
+                }
+            }
+        }
+
+        function removeMember(id, name) {
+            if (confirm(`정말 ${name}을(를) 제거하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) {
+                // Mock delete
+                const memberIndex = mockMembers.findIndex(m => m.id === id);
+                if (memberIndex !== -1) {
+                    mockMembers.splice(memberIndex, 1);
+                    renderMembers();
+                    alert(`${name}이(가) 조직에서 제거되었습니다.`);
+                }
+            }
+        }
+
+        function addTeam() {
+            const teamName = prompt('새 팀 이름을 입력하세요:');
+            if (teamName && teamName.trim()) {
+                // Check duplicate
+                const exists = mockTeams.some(t => t.name.toLowerCase() === teamName.toLowerCase());
+                if (exists) {
+                    alert('이미 존재하는 팀명입니다.');
+                    return;
+                }
+                
+                // Mock add
+                const newTeam = {
+                    id: mockTeams.length + 1,
+                    name: teamName.trim(),
+                    leaders: 0,
+                    members: 0,
+                    total: 0,
+                    createdDate: new Date().toISOString().split('T')[0],
+                    empty: true
+                };
+                mockTeams.push(newTeam);
+                renderTeams();
+                alert(`${teamName} 팀이 추가되었습니다.`);
+            }
+        }
+
+        function renameTeam(id, currentName) {
+            const newName = prompt(`팀명을 변경합니다.\n현재 팀명: ${currentName}\n\n새 팀명을 입력하세요:`);
+            
+            if (newName && newName.trim()) {
+                // Check duplicate
+                const exists = mockTeams.some(t => t.id !== id && t.name.toLowerCase() === newName.toLowerCase());
+                if (exists) {
+                    alert('이미 존재하는 팀명입니다.');
+                    return;
+                }
+                
+                // Mock update
+                const teamIndex = mockTeams.findIndex(t => t.id === id);
+                if (teamIndex !== -1) {
+                    mockTeams[teamIndex].name = newName.trim();
+                    renderTeams();
+                    renderMembers(); // 멤버 테이블도 업데이트
+                    alert(`팀명이 "${newName}"(으)로 변경되었습니다.`);
+                }
+            }
+        }
+
+        function deleteTeam(id, teamName) {
+            const team = mockTeams.find(t => t.id === id);
+            
+            if (team && team.total > 0) {
+                alert(`팀에 ${team.total}명의 멤버가 있습니다.\n먼저 멤버를 다른 팀으로 이동시켜주세요.`);
+                return;
+            }
+            
+            if (confirm(`정말 "${teamName}" 팀을 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) {
+                // Mock delete
+                const teamIndex = mockTeams.findIndex(t => t.id === id);
+                if (teamIndex !== -1) {
+                    mockTeams.splice(teamIndex, 1);
+                    renderTeams();
+                    alert(`${teamName} 팀이 삭제되었습니다.`);
+                }
+            }
+        }
+
+        function upgradePlan() {
+            alert('플랜 업그레이드 페이지로 이동합니다.');
+        }
+
+        // Organization Functions
+        function saveOrganization() {
+            const orgName = document.getElementById('orgName').value;
+            alert(`조직 정보가 저장되었습니다: ${orgName}`);
+        }
+
+        function transferOwnership() {
+            const newOwner = document.getElementById('newOwnerSelect').value;
+            const afterRole = document.getElementById('afterRole').value;
+            const afterTeam = document.getElementById('afterTeam').value;
+
+            if (!newOwner) {
+                alert('새 Owner를 선택해주세요.');
+                return;
+            }
+
+            const password = prompt('본인 확인을 위해 패스워드를 입력하세요:');
+            if (password) {
+                if (confirm('Owner 권한을 인계하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                    alert(`Owner 권한이 인계되었습니다.\n본인 역할: ${afterRole}\n배정 팀: ${afterTeam}`);
+                }
+            }
+        }
+
+        function deleteOrganization() {
+            const confirmation = prompt('조직을 삭제하려면 조직명을 입력하세요:');
+            if (confirmation === 'SynTitan Inc.') {
+                if (confirm('정말 조직을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                    alert('조직 삭제가 처리되었습니다.');
+                }
+            } else if (confirmation) {
+                alert('조직명이 일치하지 않습니다.');
+            }
+        }
+
+        // Show/hide afterTeam based on afterRole
+        document.addEventListener('DOMContentLoaded', function() {
+            const afterRoleSelect = document.getElementById('afterRole');
+            const afterTeamGroup = document.getElementById('afterTeamGroup');
+            
+            if (afterRoleSelect) {
+                afterRoleSelect.addEventListener('change', function() {
+                    if (this.value === 'leave') {
+                        afterTeamGroup.style.display = 'none';
+                    } else {
+                        afterTeamGroup.style.display = 'block';
+                    }
+                });
+            }
+        });
+
+        // Search and Filter
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const roleFilter = document.getElementById('roleFilter');
+            const teamFilter = document.getElementById('teamFilter');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterMembers);
+            }
+            if (roleFilter) {
+                roleFilter.addEventListener('change', filterMembers);
+            }
+            if (teamFilter) {
+                teamFilter.addEventListener('change', filterMembers);
+            }
+        });
+
+        function filterMembers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const teamFilter = document.getElementById('teamFilter').value;
+
+            const rows = document.querySelectorAll('#membersTableBody tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                const role = row.cells[2].textContent.toLowerCase();
+                const team = row.cells[3].textContent.toLowerCase();
+
+                const matchSearch = name.includes(searchTerm) || email.includes(searchTerm);
+                const matchRole = roleFilter === 'all' || role.includes(roleFilter);
+                const matchTeam = teamFilter === 'all' || team.includes(teamFilter);
+
+                row.style.display = (matchSearch && matchRole && matchTeam) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
